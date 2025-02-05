@@ -1,0 +1,15 @@
+{
+    "name": "logeard/ecf",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Hlodgari",
+            "email": "aurelien.logeard@gmail.com"
+        }
+    ],
+    "require": {}
+}
