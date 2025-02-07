@@ -1,16 +1,18 @@
 <?php
 
-namespace App\Models\Client;
+namespace App\models\Clients;
 
-class Client
+use JsonSerializable;
+
+class Client extends \App\models\AbstractEntity implements JsonSerializable
 { 
     private $id;
     private $nom;
     private $prenom;
-    private $addresse;
-    private $phone;
+    private $adresse;
+    private $telephone;
     private $email;
-    private $password;
+    private $mot_de_passe;
 
     public function getId(): int
     {
@@ -54,36 +56,41 @@ class Client
         return $this;
     }
 
-    public function getPhone(): int
+    public function getTelephone(): string
     {
-        return $this->phone;
+        return $this->telephone;
     }
 
-    public function setPhone(int $phone): self
+    public function setTelephone(string $telephone): self
     {
-        $this->phone = $phone;
+        $this->telephone = $telephone;
         return $this;
     }
 
-    public function getAddresse(): string
+    public function getAdresse(): string
     {
-        return $this->addresse;
+        return $this->adresse;
     }
 
-    public function setAddress(string $addresse): self
+    public function setAdresse(string $adresse): self
     {
-        $this->addresse = $addresse;
+        $this->adresse = $adresse;
         return $this;
     }
 
-    public function getPassword(): string
+    public function getMot_de_passe(): string
     {
-        return $this->password;
+        return $this->mot_de_passe;
     }
 
-    public function setPassword(string $password): self
+    public function setMot_de_passe(string $mot_de_passe): self
     {
-        $this->password = $password;
+        $this->mot_de_passe = $mot_de_passe;
         return $this;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return get_object_vars($this);
     }
 }

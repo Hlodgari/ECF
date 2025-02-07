@@ -22,17 +22,17 @@
         <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary  rounded shadow-sm">
             <div class="container-fluid">
 
-                <!-- Bouton panier, profil et login -->
+                <!-- Bouton panier, profil et Login -->
                 <div class="col-4">
                     <button class="bg-white border border-0 col-2 bg-body-tertiary position-relative">
                         <span href="#"></span>
                         <i class="bi bi-basket3-fill fs-3" id="ouvrirModalPanier">
                             <span id="notifPanier"
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
-
-                                <span class="visually-hidden"></span>
-                            </span></i>
-
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+                            
+                            <span class="visually-hidden"></span>
+                        </span></i>
+                        
                     </button>
                     <button class=" bg-white border border-0 col-2 bg-body-tertiary">
                         <i class="bi bi-person-fill px-2 fs-3" id="ouvrirModalProfil"></i>
@@ -40,6 +40,9 @@
                     
                     <button class="bg-white border border-0 col-2 bg-body-tertiary">
                         <i class="bi bi-box-arrow-in-right px-2 fs-3" id="ouvrirModalLogin"></i>
+                    </button>
+                    <button class="bg-white border border-0 col-2 bg-body-tertiary">
+                        <i class="bi bi-box-arrow-right px-2 fs-3" id="deconnexion"></i>
                     </button>
                 </div>
 
@@ -70,6 +73,8 @@
                     </ul>
                 </div>
 
+                
+
                 <!-- mes modals -->
                 <!-- modale panier -->
                 <div id="myModalPanier" class="modal">
@@ -90,7 +95,7 @@
                     <div class="modal-content">
                         <span class="closeProfil">&times;</span>
                         <h3>Inscription</h3>
-                        <form action="/register" method="POST">
+                        <form id="formRegister">
                             <div class="form-group">
                                 <label for="nom">Nom :</label>
                                 <input type="text" id="nom" name="nom" required>
@@ -132,7 +137,7 @@
                     <div class="modal-content">
                         <span class="closeLogin">&times;</span>
                         <h3>Connexion</h3>
-                        <form action="/login" method="get">
+                        <form id="formLogin">
                             <div class="form-group">
                                 <label for="email">Email :</label>
                                 <input type="email" id="email" name="email" required>
@@ -145,10 +150,8 @@
                             <div class="form-group">
                                 <input class="btn btn-success ms-auto" type="submit" value="Se connecter">
                             </div>
-                            <div class="form-group">
-                                <input class="btn btn-warning ms-auto" type="submit" value="Se deconnecter">
+                         
 
-                            </div>
                         </form>
                     </div>
                 </div>
@@ -163,6 +166,7 @@
         <div class="d-flex flex-wrap justify-content-center mt-5" id="contenuCreme"></div>
 
     </main>
-</body>
+
+   </body>
 
 </html>

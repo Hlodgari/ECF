@@ -1,55 +1,39 @@
 <?php
 
-namespace App\models\Client;
+namespace App\models\Clients;
 
-use App\Database;
+use App\config\Database;
+use App\models\AbstractEntity;
 use App\models\ModelException;
-use App\models\DAOInterface;
 use PDOException;
 
-/**
- * Cette classe est en charge de opérations CRUD pour un utilisateur de l'application
- */
-class ClientDAO implements DAOInterface {
+class ClientDAO {
 
-    /**
-     * Ajoute un utilisateur en BDD
-     * @param Client $entity Instance contenant les informations de l'utilisateur
-     * @return Client
-     * @throws ModelException Dans le cas où l'enregistrement a rencontré une erreur
-     */
-    public function create(AbstractEntity &$entity): AbstractEntity
-        /** @var Client $client */
+    public function create(Client &$entity): AbstractEntity {
         $client = $entity;
         
         try {
             $db = Database::getInstance();
-            $req = $db->prepare("INSERT INTO `client` (`nom_client`, `prenom_client`, `adresse_client`, `telephone_client`, `email_client`, `mot_de_passe_client`) VALUES (:nom, :email, :addresse, :telephone, :email, :mot_de_passe)");
+            $req = $db->prepare("INSERT INTO `client` (`nom_client`, `prenom_client`, `adresse_client`, `telephone_client`, `email_client`, `mot_de_passe_client`) VALUES (:nom, :prenom, :adresse, :telephone, :email, :mot_de_passe)");
             $done = $req->execute([
                 'nom' => $client->getNom(),
                 'prenom' => $client->getPrenom(),
-                'addresse' => $client->getAddresse(),
+                'adresse' => $client->getAdresse(),
                 'telephone' => $client->getTelephone(),
                 'email' => $client->getEmail(),
                 'mot_de_passe' => password_hash($client->getMot_de_passe(), PASSWORD_BCRYPT)
             ]);
-            if ($done == false){
+            if (!$done) {
                 throw new ModelException("Erreur à l'inscription de l'utilisateur");
             }
             $client->setId($db->lastInsertId());
             return $client;
         } catch (PDOException $exc) {
-            throw new ModelException("Erreur à l'inscription: ".$exc->getMessage());
+            throw new ModelException("Erreur à l'inscription: " . $exc->getMessage());
         }
     }
     
-    /**
-     * Lis les informations d'un utilisateur en BDD
-     * @param int $id Identifiant de l'utilisateur
-     * @throws ModelException
-     * @return Client
-     */
-    public function readOne(int $id): Client {
+    public function readOne(int $id): ?Client {
         try {
             $db = Database::getInstance();
             $req = $db->prepare("SELECT * FROM `client` WHERE id = :id");
@@ -65,11 +49,6 @@ class ClientDAO implements DAOInterface {
         }
     }
     
-    /**
-     * Lis les informations de tous les utilisateurs en BDD
-     * @throws ModelException
-     * @return array
-     */
     public function readAll(): array {
         try {
             $db = Database::getInstance();
@@ -82,27 +61,22 @@ class ClientDAO implements DAOInterface {
         }
     }
     
-    /**
-     * Met à jour les informations d'un utilisateur en BDD
-     * @param Client $entity Instance contenant les informations de l'utilisateur
-     * @return bool
-     * @throws ModelException
-     */
-    public function update(Client $entity): bool {
+    public function update(AbstractEntity $entity): bool {
         /** @var Client $client */
         $client = $entity;
         try {
             $db = Database::getInstance();
-            $req = $db->prepare("INSERT INTO `client` (`nom_client`, `prenom_client`, `adresse_client`, `telephone_client`, `email_client`, `mot_de_passe_client`) VALUES (:nom, :email, :addresse, :telephone, :email, :mot_de_passe)");
+            $req = $db->prepare("UPDATE `client` SET `nom_client` = :nom, `prenom_client` = :prenom, `adresse_client` = :adresse, `telephone_client` = :telephone, `email_client` = :email, `mot_de_passe_client` = :mot_de_passe WHERE `id` = :id");
             $done = $req->execute([
                 'nom' => $client->getNom(),
                 'prenom' => $client->getPrenom(),
-                'addresse' => $client->getAddresse(),
+                'adresse' => $client->getAdresse(),
                 'telephone' => $client->getTelephone(),
                 'email' => $client->getEmail(),
-                'mot_de_passe' => password_hash($client->getMot_de_passe(), PASSWORD_BCRYPT)
+                'mot_de_passe' => password_hash($client->getMot_de_passe(), PASSWORD_BCRYPT),
+                'id' => $client->getId()
             ]);
-            if ($done == false){
+            if (!$done) {
                 throw new ModelException("Erreur à la mise à jour de l'utilisateur");
             }
             return true;
@@ -111,20 +85,13 @@ class ClientDAO implements DAOInterface {
         }
     }
 
-    /**
-     * Supprime un utilisateur en BDD
-     * @param Client $entity Instance contenant les informations de l'utilisateur
-     * @return bool
-     * @throws ModelException
-     */
     public function delete(Client $entity): bool {
-        /** @var Client $client */
         $client = $entity;
         try {
             $db = Database::getInstance();
             $req = $db->prepare("DELETE FROM `client` WHERE `id` = :id");
             $done = $req->execute(['id' => $client->getId()]);
-            if ($done == false){
+            if (!$done) {
                 throw new ModelException("Erreur à la suppression de l'utilisateur");
             }
             return true;
@@ -133,17 +100,10 @@ class ClientDAO implements DAOInterface {
         }
     }
 
-    /**
-     * Vérifie les identifiants de connexion d'un utilisateur
-     * @param string $email
-     * @param string $password
-     * @throws ModelException
-     * @return Client
-     */
-    public function login(string $email, string $password): Client {
+    public function login(string $email, string $password): ?Client {
         try {
             $db = Database::getInstance();
-            $req = $db->prepare("SELECT * FROM `client` WHERE email = :email");
+            $req = $db->prepare("SELECT * FROM `client` WHERE email_client = :email");
             $req->execute(['email' => $email]);
             $req->setFetchMode(\PDO::FETCH_CLASS, Client::class);
             $client = $req->fetch();
@@ -151,6 +111,18 @@ class ClientDAO implements DAOInterface {
                 throw new ModelException("Un utilisateur avec ces identifiants n'existe pas dans le système");
             }
             return $client;
+        } catch (PDOException $exc) {
+            throw new ModelException("Erreur durant la requête à la BDD: " . $exc->getMessage());
+        }
+    }
+    
+    public function findByEmail(string $email): ?Client {
+        try {
+            $db = Database::getInstance();
+            $req = $db->prepare("SELECT * FROM `client` WHERE email_client = :email");
+            $req->execute(['email' => $email]);
+            $req->setFetchMode(\PDO::FETCH_CLASS, Client::class);
+            return $req->fetch();
         } catch (PDOException $exc) {
             throw new ModelException("Erreur durant la requête à la BDD: " . $exc->getMessage());
         }

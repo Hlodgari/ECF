@@ -7,6 +7,8 @@ const pizzasCreme = document.getElementById("contenuCreme");
 const btnTomate = document.getElementById("baseTomate");
 const btnCreme = document.getElementById("baseCreme");
 const btnPizza = document.getElementById("nosPizzas");
+const formLogin = document.getElementById("formLogin");
+const formRegister = document.getElementById("formRegister");
 
 // Tableau des promesses de fetch pour récupérer les données des pizzas
 const pizzas = [
@@ -89,6 +91,7 @@ function afficherContenu(data) {
 btnTomate.addEventListener("click", filtrerPizza);
 btnCreme.addEventListener("click", filtrerPizza);
 btnPizza.addEventListener("click", filtrerPizza);
+
 
 // Fonction pour filtrer les pizzas en fonction de la base
 function filtrerPizza(event) {
@@ -270,3 +273,44 @@ supprimerPizza = (function(originalSupprimerPizza) {
         mettreAJourNotif();
     };
 })(supprimerPizza);
+
+
+// Gestions d'inscription
+formRegister.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch('http://localhost/ECF/ECF-Back-end/src/index.php?route=register', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const result = await response.json();
+        console.log(result);
+    } catch (error) {
+        console.error("Erreur lors de l'inscription :", error);
+    }
+});
+
+// Gestion de la connexion
+
+formLogin.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch('http://localhost/ECF/ECF-Back-end/src/index.php?route=login', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const result = await response.json();
+        console.log(result);
+    } catch (error) {
+        console.error("Erreur lors de la connexion :", error);
+    }
+});
+
+// Gestion de la déconnexion
+

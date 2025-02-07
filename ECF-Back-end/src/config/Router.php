@@ -61,29 +61,32 @@ class Router
     * Gère le routage basé sur l'URI et la méthode HTTP
      * @return void
      */
-    public static function route() {
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $method = $_SERVER['REQUEST_METHOD'];
+    // public static function route() {
+    //     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    //     $method = $_SERVER['REQUEST_METHOD'];
 
-        switch ($uri) {
-            case '/register':
-                $controller = new \App\controller\RegisterController();
-                break;
-            case '/login':
-                $controller = new \App\controller\LoginController();
-                break;
-            case '/logout':
-                $controller = new \App\controller\LogoutController();
-                break;
-            default:
-                // Gérer d'autres routes ou afficher une page 404
-                throw new ControllerException("La route demandée n'existe pas");
-        }
+    //     switch ($uri) {
+    //         case '/register':
+    //             $controller = new \App\controllers\RegisterController();
+    //             break;
+    //         case '/login':
+    //             $controller = new \App\controllers\Clients\LoginController();
+    //             break;
+    //         case '/logout':
+    //             $controller = new \App\controllers\LogoutController();
+    //             break;
+    //         case '/pizza':
+    //             $controller = new \App\controllers\PizzaController();
+    //             break;
+    //         default:
+    //             // Gérer d'autres routes ou afficher une page 404
+    //             throw new ControllerException("La route demandée n'existe pas");
+    //     }
 
-        if ($method == 'POST') {
-            $controller->doPOST();
-        } else {
-            $controller->doGET();
-        }
-    }
+    //     if ($method == 'POST') {
+    //         $controller->doPOST();
+    //     } else {
+    //         $controller->doGET();
+    //     }
+    // }
 }
