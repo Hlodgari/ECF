@@ -276,6 +276,44 @@ supprimerPizza = (function(originalSupprimerPizza) {
 
 
 // Gestions d'inscription
+// formRegister.addEventListener("submit", async function (event) {
+//     event.preventDefault();
+//     const formData = new FormData(this);
+
+//     try {
+//         const response = await fetch('http://localhost/ECF/ECF-Back-end/src/index.php?route=register', {
+//             method: 'POST',
+//             body: formData,
+//         });
+
+//         const result = await response.json();
+//         console.log(result);
+//     } catch (error) {
+//         console.error("Erreur lors de l'inscription :", error);
+//     }
+// });
+
+// // Gestion de la connexion
+
+// formLogin.addEventListener("submit", async function (event) {
+//     event.preventDefault();
+//     const formData = new FormData(this);
+
+//     try {
+//         const response = await fetch('http://localhost/ECF/ECF-Back-end/src/index.php?route=login', {
+//             method: 'POST',
+//             body: formData,
+//         });
+
+//         const result = await response.json();
+//         console.log(result);
+//     } catch (error) {
+//         console.error("Erreur lors de la connexion :", error);
+//     }
+// });
+
+// Gestion de la déconnexion
+// Gestions d'inscription
 formRegister.addEventListener("submit", async function (event) {
     event.preventDefault();
     const formData = new FormData(this);
@@ -287,14 +325,18 @@ formRegister.addEventListener("submit", async function (event) {
         });
 
         const result = await response.json();
-        console.log(result);
+        if (result.success) {
+            alert("Inscription réussie !");
+            modalProfil.style.display = "none";
+        } else {
+            alert("Erreur lors de l'inscription : " + result.error);
+        }
     } catch (error) {
         console.error("Erreur lors de l'inscription :", error);
     }
 });
 
 // Gestion de la connexion
-
 formLogin.addEventListener("submit", async function (event) {
     event.preventDefault();
     const formData = new FormData(this);
@@ -306,11 +348,30 @@ formLogin.addEventListener("submit", async function (event) {
         });
 
         const result = await response.json();
-        console.log(result);
+        if (result.email) {
+            alert("Connexion réussie !");
+            modalLogin.style.display = "none";
+        } else {
+            alert("Erreur lors de la connexion : " + result.message);
+        }
     } catch (error) {
         console.error("Erreur lors de la connexion :", error);
     }
 });
 
 // Gestion de la déconnexion
+document.getElementById("deconnexion").addEventListener("click", async function () {
+    try {
+        const response = await fetch('http://localhost/ECF/ECF-Back-end/src/index.php?route=logout', {
+            method: 'GET',
+        });
 
+        if (response.ok) {
+            alert("Déconnexion réussie !");
+        } else {
+            alert("Erreur lors de la déconnexion");
+        }
+    } catch (error) {
+        console.error("Erreur lors de la déconnexion :", error);
+    }
+});

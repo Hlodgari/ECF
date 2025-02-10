@@ -4,7 +4,6 @@ namespace App\controllers;
 
 use App\models\Clients\ClientDAO;
 use App\models\Clients\Client;
-use App\config\Router;
 
 class RegisterController implements \App\controllers\ControllerInterface {
 
@@ -15,8 +14,13 @@ class RegisterController implements \App\controllers\ControllerInterface {
     }
 
     public function doGET(): void {
+        header('Content-Type: application/json');
         if (isset($_GET['email'])) {
-            $email = $_GET['email'];
+            $email = filter_var($_GET['email'], FILTER_VALIDATE_EMAIL);
+            if ($email === false) {
+                echo json_encode(['error' => 'Invalid email format']);
+                return;
+            }
             $client = $this->model->findByEmail($email);
             if ($client) {
                 echo json_encode(['exists' => true]);
@@ -29,27 +33,41 @@ class RegisterController implements \App\controllers\ControllerInterface {
     }
 
     public function doPOST(): void {
-        if (isset($_POST["nom"], $_POST["prenom"], $_POST["email"], $_POST["telephone"], $_POST["password"], $_POST["adresse"])) {
-            $nom = $_POST["nom"];
-            $prenom = $_POST["prenom"];
-            $email = $_POST["email"];
-            $telephone = $_POST["telephone"];
-            $mot_de_passe = $_POST["password"];
-            $adresse = $_POST["adresse"];
+        header('Content-Type: application/json');
+        $requiredFields = ['nom', 'prenom', 'email', 'telephone', 'motdepasse', 'adresse'];
+        foreach ($requiredFields as $field) {
+            if (!isset($_POST[$field])) {
+                echo json_encode(['error' => 'Missing parameters']);
+                return;
+            }
+        }
 
-            $newClient = new Client();
-            $newClient
-                ->setNom($nom)
-                ->setPrenom($prenom)
-                ->setEmail($email)
-                ->setTelephone($telephone)
-                ->setMot_de_passe($mot_de_passe)
-                ->setAdresse($adresse);
+        $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+        if ($email === false) {
+            echo json_encode(['error' => 'Invalid email format']);
+            return;
+        }
 
+        $nom = htmlspecialchars($_POST['nom']);
+        $prenom = htmlspecialchars($_POST['prenom']);
+        $telephone = htmlspecialchars($_POST['telephone']);
+        $mot_de_passe = password_hash($_POST['motdepasse'], PASSWORD_BCRYPT);
+        $adresse = htmlspecialchars($_POST['adresse']);
+
+        $newClient = new Client();
+        $newClient
+            ->setNom($nom)
+            ->setPrenom($prenom)
+            ->setEmail($email)
+            ->setTelephone($telephone)
+            ->setMot_de_passe($mot_de_passe)
+            ->setAdresse($adresse);
+
+        try {
             $this->model->create($newClient);
-            Router::redirect("POST", "login");
-        } else {
-            echo json_encode(['error' => 'Missing parameters']);
+            echo json_encode(['success' => true]);
+        } catch (\Exception $e) {
+            echo json_encode(['error' => 'Failed to create client']);
         }
     }
 }

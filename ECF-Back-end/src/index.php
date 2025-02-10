@@ -23,10 +23,10 @@ $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 // Ajouter les routes
-
 Router::addRoute("pizzas", new PizzaController());
 // Router::addRoute("register", new RegisterController());
 // Router::addRoute("logout", new LogoutController());
 Router::addRoute("login", new LoginController());
+
 // Déléguer la requête au contrôleur approprié
 Router::delegate();
